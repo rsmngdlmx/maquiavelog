@@ -8,7 +8,7 @@ None.
 
 ### Functionality added
 
-- Create Node JS project.
+- Create Node.js project.
 
 ### Documentation
 
