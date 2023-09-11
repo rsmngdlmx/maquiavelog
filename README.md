@@ -1,2 +1,2 @@
-# maquiavelog
-An easy to use log for any Node JS project.
+# MaquiaveLog
+An easy to use log for Node.js.

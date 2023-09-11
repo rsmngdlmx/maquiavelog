@@ -1,14 +1,12 @@
 {
   "name": "maquiavelog",
-  "version": "0.0.1",
-  "description": "An easy to use log for any Node JS project.",
-  "main": "index.js",
+  "version": "0.1.0",
+  "description": "An easy to use log for Node.js.",
+  "main": "maquiavelog.js",
   "scripts": {
-    "start": "node index.js",
     "test": "npm run test-unit",
     "coverage": "nyc --all --reporter=lcov --reporter=text --check-coverage --lines 100 --functions 100 --branches 100 --per-file npm run test-unit",
-    "test-unit": "mocha 'test/unit/**/*.spec.js'",
-    "test-and-coverage": "npm run test && npm run coverage"
+    "test-unit": "mocha 'test/unit/**/*.spec.js'"
   },
   "repository": {
     "type": "git",
