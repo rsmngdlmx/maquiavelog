@@ -8,11 +8,9 @@ None.
 
 ### Functionality added
 
-- Create Node.js project.
+- Set up Node.js project.
 
 ### Documentation
 
 - Add Changelog file.
-- Update Readme file.
-
-## v0.1.0 - TBA
+- Add Readme file.
