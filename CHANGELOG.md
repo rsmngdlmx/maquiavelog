@@ -1,4 +1,4 @@
-# MaquiaveLog Changelog
+# Maquiavelog Changelog
 
 ## Known issues
 
