@@ -9,25 +9,14 @@ chai.use(require('sinon-chai'));
 
 describe('MaquiaveLog', () => {
     let maquiavelog;
-    let originalStdout;
 
     beforeEach(() =>{
         maquiavelog = Maquiavelog();
-        originalStdout = process.stdout;
-
-        Object.defineProperty(process, 'stdout', {
-            value: {
-                write: sinon.stub().callsFake(chunk => {})
-            }
-        });
+        sinon.stub(process.stdout, 'write').callsFake(chunk => {});
     });
 
     afterEach(() => {
-        Object.defineProperty(process, 'stdout', {
-            value: originalStdout
-        });
-
-        console.log('Finished!');
+        sinon.restore();
     });
 
     it('logs info("Hello World")', () => {
