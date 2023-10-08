@@ -9,6 +9,7 @@ None.
 ### Functionality added
 
 - Set up Node.js project.
+- Add log levels logic.
 
 ### Documentation
 
