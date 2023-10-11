@@ -10,9 +10,11 @@
 
 const chai = require('chai');
 const expect = chai.expect;
+const logLevels = require('../../../../lib/levels/levels');
 
 describe('Log levels', () => {
-    let module;
+    let logFake;
+    const testLevel = { label: 'info', value: 30 };
     const defaultLogLevels = {
         trace: 10,
         debug: 20,
@@ -24,95 +26,91 @@ describe('Log levels', () => {
     };
 
     beforeEach(() => {
-        module = require('../../../../lib/levels/levels')();
+        logFake = Object.assign({ _level: null }, logLevels);
     });
 
     it('has the default log levels set', () => {
-        expect(module.levels).to.deep.equal(defaultLogLevels);
+        expect(logFake.levels).to.deep.equal(defaultLogLevels);
     });
 
-    it('prevents the log levels from being overwritten', () => {
-        const call = () => { module.levels = {}; };
-        expect(call).to.throw('Cannot set property levels of #<Object> which has only a getter');
+    it('gets the current log level set', () => {
+        logFake._level = testLevel;
+        expect(logFake.getLevel()).to.deep.equal(testLevel);
     });
 
     it('sets the log level when using the level label', () => {
-        expect(module.level).to.be.null;
-        module.level = 'info';
-        expect(module.level.label).to.equal('info');
-        expect(module.level.value).to.equal(30);
+        expect(logFake.getLevel()).to.be.null;
+        logFake.setLevel('info');
+        expect(logFake.getLevel()).to.deep.equal(testLevel);
     });
 
     it('sets the log level when using the level value', () => {
-        expect(module.level).to.be.null;
-        module.level = 30;
-        expect(module.level.label).to.equal('info');
-        expect(module.level.value).to.equal(30);
+        expect(logFake.getLevel()).to.be.null;
+        logFake.setLevel(30);
+        expect(logFake.getLevel()).to.deep.equal(testLevel);
     });
 
     it('prevents the log level from being set when passing an unknown level label', () => {
-        const call = () => { module.level = 'unknown' };
-        expect(call).to.throw('Unknown level');
+        expect(logFake.setLevel.bind(logFake, 'unknown')).to.throw('Unknown level');
     });
 
     it('prevents the log level from being set when passing an unknown level value', () => {
-        const call = () => { module.level = 1234 };
-        expect(call).to.throw('Unknown level');
+        expect(logFake.setLevel.bind(logFake, 1234)).to.throw('Unknown level');
     });
 
     it('checks if the level is enabled when tested with the level label', () => {
-        expect(module.isLevelEnabled('trace')).to.equal(false);
-        module.level = defaultLogLevels.trace;
-        expect(module.isLevelEnabled('trace')).to.equal(true);
+        expect(logFake.isLevelEnabled('trace')).to.equal(false);
+        logFake.setLevel(defaultLogLevels.trace);
+        expect(logFake.isLevelEnabled('trace')).to.equal(true);
     });
 
     it('checks if the level is enabled when tested with the level value', () => {
-        expect(module.isLevelEnabled(10)).to.equal(false);
-        module.level = defaultLogLevels.trace;
-        expect(module.isLevelEnabled(10)).to.equal(true);
+        expect(logFake.isLevelEnabled(10)).to.equal(false);
+        logFake.setLevel(defaultLogLevels.trace);
+        expect(logFake.isLevelEnabled(10)).to.equal(true);
     });
 
     it('treats unknown values as disabled levels when checking if a level is enabled', () => {
-        module.level = defaultLogLevels.trace;
-        expect(module.isLevelEnabled('unknown')).to.equal(false);
-        expect(module.isLevelEnabled(1234)).to.equal(false);
+        logFake.setLevel(defaultLogLevels.trace);
+        expect(logFake.isLevelEnabled('unknown')).to.equal(false);
+        expect(logFake.isLevelEnabled(1234)).to.equal(false);
     });
 
     it('considers the level as enabled if it is equal to the level set', () => {
-        module.level = defaultLogLevels.warn;
-        expect(module.isLevelEnabled('warn')).to.equal(true);
+        logFake.setLevel(defaultLogLevels.warn);
+        expect(logFake.isLevelEnabled('warn')).to.equal(true);
     });
 
     it('considers the level as enabled if it is greater than the level set and is not the silent level', () => {
-        module.level = defaultLogLevels.warn;
-        expect(module.isLevelEnabled('error')).to.equal(true);
-        expect(module.isLevelEnabled('silent')).to.equal(false);
+        logFake.setLevel(defaultLogLevels.warn);
+        expect(logFake.isLevelEnabled('error')).to.equal(true);
+        expect(logFake.isLevelEnabled('silent')).to.equal(false);
     });
 
     it('considers the level as disabled if it is less than the level set', () => {
-        module.level = defaultLogLevels.warn;
-        expect(module.isLevelEnabled('info')).to.equal(false);
+        logFake.setLevel(defaultLogLevels.warn);
+        expect(logFake.isLevelEnabled('info')).to.equal(false);
     });
 
     it('considers all levels but silent as enabled if the trace level is set', () => {
-        module.level = defaultLogLevels.trace;
-        expect(module.isLevelEnabled('trace')).to.equal(true);
-        expect(module.isLevelEnabled('debug')).to.equal(true);
-        expect(module.isLevelEnabled('info')).to.equal(true);
-        expect(module.isLevelEnabled('warn')).to.equal(true);
-        expect(module.isLevelEnabled('error')).to.equal(true);
-        expect(module.isLevelEnabled('fatal')).to.equal(true);
-        expect(module.isLevelEnabled('silent')).to.equal(false);
+        logFake.setLevel(defaultLogLevels.trace);
+        expect(logFake.isLevelEnabled('trace')).to.equal(true);
+        expect(logFake.isLevelEnabled('debug')).to.equal(true);
+        expect(logFake.isLevelEnabled('info')).to.equal(true);
+        expect(logFake.isLevelEnabled('warn')).to.equal(true);
+        expect(logFake.isLevelEnabled('error')).to.equal(true);
+        expect(logFake.isLevelEnabled('fatal')).to.equal(true);
+        expect(logFake.isLevelEnabled('silent')).to.equal(false);
     });
 
     it('considers all levels as disabled if the silent level is set', () => {
-        module.level = defaultLogLevels.silent;
-        expect(module.isLevelEnabled('trace')).to.equal(false);
-        expect(module.isLevelEnabled('debug')).to.equal(false);
-        expect(module.isLevelEnabled('info')).to.equal(false);
-        expect(module.isLevelEnabled('warn')).to.equal(false);
-        expect(module.isLevelEnabled('error')).to.equal(false);
-        expect(module.isLevelEnabled('fatal')).to.equal(false);
-        expect(module.isLevelEnabled('silent')).to.equal(true);
-    })
+        logFake.setLevel(defaultLogLevels.silent);
+        expect(logFake.isLevelEnabled('trace')).to.equal(false);
+        expect(logFake.isLevelEnabled('debug')).to.equal(false);
+        expect(logFake.isLevelEnabled('info')).to.equal(false);
+        expect(logFake.isLevelEnabled('warn')).to.equal(false);
+        expect(logFake.isLevelEnabled('error')).to.equal(false);
+        expect(logFake.isLevelEnabled('fatal')).to.equal(false);
+        expect(logFake.isLevelEnabled('silent')).to.equal(true);
+    });
 });

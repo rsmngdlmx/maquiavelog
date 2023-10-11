@@ -7,20 +7,17 @@ const expect = chai.expect;
 
 chai.use(require('sinon-chai'));
 
-describe('MaquiaveLog', () => {
+describe('Maquiavelog', () => {
     let maquiavelog;
 
     beforeEach(() =>{
         maquiavelog = Maquiavelog();
-        sinon.stub(process.stdout, 'write').callsFake(chunk => {});
-    });
-
-    afterEach(() => {
-        sinon.restore();
     });
 
     it('logs info("Hello World")', () => {
+        sinon.stub(process.stdout, 'write').callsFake(chunk => {});
         maquiavelog.info('Hello world!');
         expect(process.stdout.write).to.have.been.calledOnceWith('Hello world!');
+        sinon.restore();
     });
 });
