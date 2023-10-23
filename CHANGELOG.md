@@ -10,6 +10,7 @@ None.
 
 - Set up Node.js project.
 - Add log levels logic.
+- Add outputs logic.
 
 ### Documentation
 
